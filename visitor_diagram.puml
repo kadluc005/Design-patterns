@@ -1,0 +1,72 @@
+@startuml
+!define INTERFACE interface
+!define ABSTRACT abstract
+
+title Diagramme de classes - Pattern Visitor (Aéroport)
+
+package "Éléments (Avions)" {
+    INTERFACE Avion {
+        + {abstract} accept(visitor: AvionVisitor)
+    }
+
+    class AvionCargo {
+        - cargaison: String
+        + accept(visitor: AvionVisitor)
+        + getCargaison(): String
+    }
+
+    class AvionPassagers {
+        - nombrePassagers: int
+        + accept(visitor: AvionVisitor)
+        + getNombrePassagers(): int
+    }
+
+    class AvionMilitaire {
+        - mission: String
+        + accept(visitor: AvionVisitor)
+        + getMission(): String
+    }
+
+    Avion <|-- AvionCargo
+    Avion <|-- AvionPassagers
+    Avion <|-- AvionMilitaire
+}
+
+package "Visiteurs" {
+    INTERFACE AvionVisitor {
+        + {abstract} visit(avion: AvionCargo)
+        + {abstract} visit(avion: AvionPassagers)
+        + {abstract} visit(avion: AvionMilitaire)
+    }
+
+    class ControleSecuriteVisitor {
+        + visit(avion: AvionCargo)
+        + visit(avion: AvionPassagers)
+        + visit(avion: AvionMilitaire)
+    }
+
+    class CalculTaxeVisitor {
+        + visit(avion: AvionCargo)
+        + visit(avion: AvionPassagers)
+        + visit(avion: AvionMilitaire)
+    }
+
+    AvionVisitor <|-- ControleSecuriteVisitor
+    AvionVisitor <|-- CalculTaxeVisitor
+}
+
+'  package "Application" {
+'      class Aeroport {
+'         + main(args: String[])
+'      }
+'  }
+
+' Relations
+AvionCargo --> AvionVisitor : accept
+AvionPassagers --> AvionVisitor : accept
+AvionMilitaire --> AvionVisitor : accept
+
+' Aeroport --> Avion : utilise
+' Aeroport --> AvionVisitor : utilise
+
+@enduml
